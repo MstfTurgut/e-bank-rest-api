@@ -1,58 +1,64 @@
 package com.mstftrgt.ebank.controller;
 
-
-import com.mstftrgt.ebank.model.Account;
+import com.mstftrgt.ebank.dto.AccountDto;
+import com.mstftrgt.ebank.dto.NewAccountRequestDto;
 import com.mstftrgt.ebank.model.Customer;
-import com.mstftrgt.ebank.repository.AccountRepository;
-import com.mstftrgt.ebank.repository.CustomerRepository;
+import com.mstftrgt.ebank.service.AccountService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/e-bank/v1/accounts")
+@RequestMapping("/accounts")
 public class AccountController {
 
-    private final AccountRepository accountRepository;
+    private final AccountService accountService;
 
-    private final CustomerRepository customerRepository;
-
-    public AccountController(AccountRepository accountRepository, CustomerRepository customerRepository) {
-        this.accountRepository = accountRepository;
-        this.customerRepository = customerRepository;
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Account> getAccount(@PathVariable String id) {
+    public ResponseEntity<AccountDto> getAccount(@PathVariable String id) {
 
-        Optional<Account> byId = accountRepository.findById(id);
+        Customer customer = (Customer) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if(byId.isEmpty()) return ResponseEntity.notFound().build();
+        AccountDto accountDto = accountService.getAccountById(id, customer.getId());
 
-        return ResponseEntity.ok(byId.get());
+        return ResponseEntity.ok(accountDto);
+    }
+
+    @PostMapping("/create-account")
+    public ResponseEntity<Void> createAccount(@RequestBody NewAccountRequestDto newAccountRequest, UriComponentsBuilder ucb) {
+
+        AccountDto  accountDto = accountService.createNewAccount(newAccountRequest);
+
+        URI locationOfNewAccount = ucb.path("accounts/{id}").buildAndExpand(accountDto.getId()).toUri();
+
+        return ResponseEntity.created(locationOfNewAccount).build();
     }
 
     @GetMapping
-    public ResponseEntity<List<Account>> getAccounts() {
-        return ResponseEntity.ok(accountRepository.findAll());
+    public ResponseEntity<List<AccountDto>> myAccounts() {
+
+        Customer customer = (Customer) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return ResponseEntity.ok(accountService.getAllAccounts(customer));
+
     }
 
-    @PostMapping
-    public ResponseEntity<Void> addAccount(@RequestBody Account account, UriComponentsBuilder ucb) {
+    @DeleteMapping("/delete-account/{id}")
+    public ResponseEntity<Void> deleteAccount(@PathVariable String id) {
 
-        Optional<Customer> byId = customerRepository.findById(account.getCustomer().getId());
+        Customer customer = (Customer) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        account.setCustomer(byId.get());
-
-        Account savedAccount = accountRepository.save(account);
-
-        URI location = ucb.path("e-bank/v1/accounts/{id}").buildAndExpand(savedAccount.getId()).toUri();
-
-        return ResponseEntity.created(location).build();
+        accountService.deleteAccountById(id, customer.getId());
+        return ResponseEntity.noContent().build();
     }
 
 }

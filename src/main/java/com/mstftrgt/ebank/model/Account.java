@@ -3,6 +3,7 @@ package com.mstftrgt.ebank.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,35 +20,22 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
+    @Column(nullable = false, unique = true)
     private String accountNumber;
 
+    @Column(nullable = false)
     private BigDecimal balance;
 
-    private LocalDateTime creationDate;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "account")
-    private Set<Card> cards;
-
-    @OneToMany(mappedBy = "account")
-    private Set<Transaction> transactions;
-
-    public Account(String accountNumber, BigDecimal balance, LocalDateTime creationDate) {
+    public Account(String accountNumber, BigDecimal balance, LocalDateTime createdAt) {
         this.accountNumber = accountNumber;
         this.balance = balance;
-        this.creationDate = creationDate;
-    }
-
-    public void addCard(Card card) {
-        if (cards == null) cards = new HashSet<>();
-        cards.add(card);
-    }
-
-    public void addTransaction(Transaction transaction) {
-        if (transactions == null) transactions = new HashSet<>();
-        transactions.add(transaction);
+        this.createdAt = createdAt;
     }
 }

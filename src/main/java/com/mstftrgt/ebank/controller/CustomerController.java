@@ -1,46 +1,43 @@
 package com.mstftrgt.ebank.controller;
 
+import com.mstftrgt.ebank.dto.CustomerDto;
 import com.mstftrgt.ebank.model.Customer;
-import com.mstftrgt.ebank.repository.CustomerRepository;
+import com.mstftrgt.ebank.service.CustomerService;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
-import java.util.Optional;
+import java.util.List;
 
 @RestController
-@RequestMapping("/e-bank/v1/customers")
+@RequestMapping("/customers")
 public class CustomerController {
-    private final CustomerRepository customerRepository;
 
-    public CustomerController(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
+    private final CustomerService customerService;
+    private final ModelMapper modelMapper;
+    public CustomerController(CustomerService customerService, ModelMapper modelMapper) {
+        this.customerService = customerService;
+        this.modelMapper = modelMapper;
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<CustomerDto> getCustomer() {
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Customer> getCustomer(@PathVariable String id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        Optional<Customer> customer = customerRepository.findById(id);
+        Customer currentCustomer = (Customer) authentication.getPrincipal();
 
-        if(customer.isEmpty()) return ResponseEntity.notFound().build();
+        CustomerDto customerDto = modelMapper.map(currentCustomer, CustomerDto.class);
 
-        return ResponseEntity.ok(customer.get());
+        return ResponseEntity.ok(customerDto);
     }
 
-    @PostMapping
-    public ResponseEntity<Void> addCustomer(@RequestBody Customer customer, UriComponentsBuilder ucb) {
-
-        Customer savedCustomer = customerRepository.save(customer);
-
-        URI locationOfNewUser = ucb
-                .path("e-bank/v1/customers/{id}")
-                .buildAndExpand(savedCustomer.getId())
-                .toUri();
-
-        return ResponseEntity.created(locationOfNewUser).build();
-
+    @PostMapping("/")
+    public ResponseEntity<List<CustomerDto>> allCustomers() {
+        List<CustomerDto> customers = customerService.allCustomers();
+        return ResponseEntity.ok(customers);
     }
 
 }

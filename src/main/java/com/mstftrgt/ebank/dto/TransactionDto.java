@@ -14,7 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionDto {
-    private String id;
+    private TransactionCustomerDto senderCustomer;
+    private TransactionCustomerDto receiverCustomer;
 
     @Enumerated(EnumType.STRING)
     private Transaction.TransactionType transactionType;
