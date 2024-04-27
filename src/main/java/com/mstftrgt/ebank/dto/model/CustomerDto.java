@@ -1,4 +1,4 @@
-package com.mstftrgt.ebank.dto;
+package com.mstftrgt.ebank.dto.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,8 +6,6 @@ import lombok.NoArgsConstructor;
 
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class CustomerDto {
     private String id;
     private String email;

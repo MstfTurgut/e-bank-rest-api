@@ -1,11 +1,12 @@
 package com.mstftrgt.ebank.service;
 
 
-import com.mstftrgt.ebank.dto.AccountDto;
-import com.mstftrgt.ebank.dto.NewAccountRequestDto;
-import com.mstftrgt.ebank.exception.AccountAccessDeniedException;
+import com.mstftrgt.ebank.dto.model.AccountDto;
+import com.mstftrgt.ebank.dto.model.TransactionDto;
+import com.mstftrgt.ebank.dto.request.NewAccountRequestDto;
+import com.mstftrgt.ebank.dto.request.NewMoneyTransferRequestDto;
 import com.mstftrgt.ebank.exception.AccountNotFoundException;
-import com.mstftrgt.ebank.exception.InvalidInitialBalanceException;
+import com.mstftrgt.ebank.exception.InsufficientBalanceException;
 import com.mstftrgt.ebank.model.Account;
 import com.mstftrgt.ebank.model.Customer;
 import com.mstftrgt.ebank.model.Transaction;
@@ -13,7 +14,7 @@ import com.mstftrgt.ebank.repository.AccountRepository;
 import com.mstftrgt.ebank.repository.TransactionRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -40,21 +41,17 @@ public class AccountService {
 
     public AccountDto createNewAccount(NewAccountRequestDto newAccountRequest) {
 
-        if(newAccountRequest.getInitialBalance().compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidInitialBalanceException("Initial balance cannot be negative");
-        }
-
         Account newAccount = new Account();
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Customer customer = (Customer)authentication.getPrincipal();
+        Customer customer = (Customer) authentication.getPrincipal();
         newAccount.setCustomer(customer);
         newAccount.setBalance(newAccountRequest.getInitialBalance());
         newAccount.setAccountNumber(generateAccountNumber());
 
         Account account = accountRepository.save(newAccount);
 
-        if(newAccountRequest.getInitialBalance().compareTo(BigDecimal.ZERO) > 0) {
+        if (newAccountRequest.getInitialBalance().compareTo(BigDecimal.ZERO) > 0) {
 
             Transaction transaction = new Transaction();
             transaction.setSenderAccount(account);
@@ -80,22 +77,23 @@ public class AccountService {
         return sb.toString();
     }
 
-    public AccountDto getAccountById(String id, String customerId) {
+    public AccountDto getAccountById(String accountId, String customerId) {
 
-        return modelMapper.map(findAccountById(id, customerId), AccountDto.class);
+        return modelMapper.map(findAccountById(accountId, customerId), AccountDto.class);
     }
 
-    protected Account findAccountById(String id, String customerId) {
+    protected Account findAccountById(String accountId, String customerId) {
 
-        Optional<Account> accountOptional = accountRepository.findById(id);
+        Optional<Account> accountOptional = accountRepository.findById(accountId);
 
-        if(accountOptional.isEmpty())
-            throw new AccountNotFoundException("Account not found for id : " + id);
+        if (accountOptional.isEmpty())
+            throw new AccountNotFoundException("Account not found for id : " + accountId);
 
         Account account = accountOptional.get();
 
-        if(!account.getCustomer().getId().equals(customerId))
-            throw new AccountAccessDeniedException("Access denied");
+        if (!account.getCustomer().getId().equals(customerId))
+            throw new AccountNotFoundException("Account not found for id : " + accountId);  // least privilege principle
+
 
         return account;
     }
@@ -115,4 +113,6 @@ public class AccountService {
 
         accountRepository.delete(account);
     }
+
+
 }

@@ -1,6 +1,6 @@
 package com.mstftrgt.ebank.controller;
 
-import com.mstftrgt.ebank.dto.CustomerDto;
+import com.mstftrgt.ebank.dto.model.CustomerDto;
 import com.mstftrgt.ebank.model.Customer;
 import com.mstftrgt.ebank.service.CustomerService;
 import org.modelmapper.ModelMapper;

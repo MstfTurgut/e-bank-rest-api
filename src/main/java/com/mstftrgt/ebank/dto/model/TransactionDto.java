@@ -1,4 +1,4 @@
-package com.mstftrgt.ebank.dto;
+package com.mstftrgt.ebank.dto.model;
 
 import com.mstftrgt.ebank.model.Transaction;
 import jakarta.persistence.EnumType;
@@ -11,16 +11,12 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class TransactionDto {
-    private TransactionCustomerDto senderCustomer;
-    private TransactionCustomerDto receiverCustomer;
-
     @Enumerated(EnumType.STRING)
     private Transaction.TransactionType transactionType;
-
     private BigDecimal amount;
     private LocalDateTime date;
     private String description;
+    private TransactionCustomerDto senderCustomer;
+    private TransactionCustomerDto receiverCustomer;
 }

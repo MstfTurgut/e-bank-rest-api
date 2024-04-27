@@ -1,5 +1,4 @@
-package com.mstftrgt.ebank.dto;
-import com.mstftrgt.ebank.model.Customer;
+package com.mstftrgt.ebank.dto.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,8 +7,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class AccountDto {
     private String id;
     private CustomerDto customerDto;

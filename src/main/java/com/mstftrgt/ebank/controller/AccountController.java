@@ -1,11 +1,15 @@
 package com.mstftrgt.ebank.controller;
 
-import com.mstftrgt.ebank.dto.AccountDto;
-import com.mstftrgt.ebank.dto.NewAccountRequestDto;
+import com.mstftrgt.ebank.dto.model.AccountDto;
+import com.mstftrgt.ebank.dto.model.TransactionDto;
+import com.mstftrgt.ebank.dto.request.NewAccountRequestDto;
+import com.mstftrgt.ebank.dto.request.NewMoneyTransferRequestDto;
 import com.mstftrgt.ebank.model.Customer;
+import com.mstftrgt.ebank.model.Transaction;
 import com.mstftrgt.ebank.service.AccountService;
+import com.mstftrgt.ebank.service.TransactionService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -34,7 +38,7 @@ public class AccountController {
     }
 
     @PostMapping("/create-account")
-    public ResponseEntity<Void> createAccount(@RequestBody NewAccountRequestDto newAccountRequest, UriComponentsBuilder ucb) {
+    public ResponseEntity<Void> createAccount(@RequestBody @Valid NewAccountRequestDto newAccountRequest, UriComponentsBuilder ucb) {
 
         AccountDto  accountDto = accountService.createNewAccount(newAccountRequest);
 
@@ -52,7 +56,7 @@ public class AccountController {
 
     }
 
-    @DeleteMapping("/delete-account/{id}")
+    @DeleteMapping("/{id}/delete-account")
     public ResponseEntity<Void> deleteAccount(@PathVariable String id) {
 
         Customer customer = (Customer) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

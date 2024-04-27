@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, String> {
@@ -14,5 +15,7 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     default List<Account> findAll() {
         throw new UnsupportedOperationException("unsupported, please use findAllByCustomerId instead");
     }
+
+    Optional<Account> findAccountByAccountNumber(String accountNumber);
 
 }
