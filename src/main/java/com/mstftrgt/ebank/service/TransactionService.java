@@ -1,6 +1,5 @@
 package com.mstftrgt.ebank.service;
 
-import com.mstftrgt.ebank.dto.model.CustomerDto;
 import com.mstftrgt.ebank.dto.model.TransactionCustomerDto;
 import com.mstftrgt.ebank.dto.model.TransactionDto;
 import com.mstftrgt.ebank.dto.request.NewMoneyTransferRequestDto;
@@ -19,7 +18,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TransactionService {

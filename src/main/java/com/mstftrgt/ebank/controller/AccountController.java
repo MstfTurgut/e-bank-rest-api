@@ -1,13 +1,9 @@
 package com.mstftrgt.ebank.controller;
 
 import com.mstftrgt.ebank.dto.model.AccountDto;
-import com.mstftrgt.ebank.dto.model.TransactionDto;
 import com.mstftrgt.ebank.dto.request.NewAccountRequestDto;
-import com.mstftrgt.ebank.dto.request.NewMoneyTransferRequestDto;
 import com.mstftrgt.ebank.model.Customer;
-import com.mstftrgt.ebank.model.Transaction;
 import com.mstftrgt.ebank.service.AccountService;
-import com.mstftrgt.ebank.service.TransactionService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;

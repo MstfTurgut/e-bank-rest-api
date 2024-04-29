@@ -2,8 +2,9 @@ package com.mstftrgt.ebank.service;
 
 
 import com.mstftrgt.ebank.dto.model.CustomerDto;
-import com.mstftrgt.ebank.dto.auth.LoginCustomerDto;
-import com.mstftrgt.ebank.dto.auth.RegisterCustomerDto;
+import com.mstftrgt.ebank.dto.request.auth.LoginCustomerRequestDto;
+import com.mstftrgt.ebank.dto.request.auth.RegisterCustomerRequestDto;
+import com.mstftrgt.ebank.exception.EmailAlreadyInUseException;
 import com.mstftrgt.ebank.model.Customer;
 import com.mstftrgt.ebank.repository.CustomerRepository;
 import org.modelmapper.ModelMapper;
@@ -11,6 +12,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class AuthenticationService {
@@ -28,7 +31,11 @@ public class AuthenticationService {
         this.modelMapper = modelMapper;
     }
 
-    public CustomerDto register(RegisterCustomerDto registerCustomerDto) {
+    public CustomerDto register(RegisterCustomerRequestDto registerCustomerDto) {
+
+        Optional<Customer> optionalCustomer = customerRepository.findByEmail(registerCustomerDto.getEmail());
+
+        if(optionalCustomer.isPresent()) throw new EmailAlreadyInUseException("This email already in use.");
 
         Customer customer = new Customer();
 
@@ -44,7 +51,7 @@ public class AuthenticationService {
         return modelMapper.map(customerRepository.save(customer), CustomerDto.class);
     }
 
-    public Customer login(LoginCustomerDto loginCustomerDto) {
+    public Customer login(LoginCustomerRequestDto loginCustomerDto) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginCustomerDto.getEmail(), loginCustomerDto.getPassword()));
         return customerRepository.findByEmail(loginCustomerDto.getEmail()).orElseThrow();
     }

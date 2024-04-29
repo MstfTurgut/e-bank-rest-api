@@ -2,11 +2,8 @@ package com.mstftrgt.ebank.service;
 
 
 import com.mstftrgt.ebank.dto.model.AccountDto;
-import com.mstftrgt.ebank.dto.model.TransactionDto;
 import com.mstftrgt.ebank.dto.request.NewAccountRequestDto;
-import com.mstftrgt.ebank.dto.request.NewMoneyTransferRequestDto;
 import com.mstftrgt.ebank.exception.AccountNotFoundException;
-import com.mstftrgt.ebank.exception.InsufficientBalanceException;
 import com.mstftrgt.ebank.model.Account;
 import com.mstftrgt.ebank.model.Customer;
 import com.mstftrgt.ebank.model.Transaction;
@@ -14,7 +11,6 @@ import com.mstftrgt.ebank.repository.AccountRepository;
 import com.mstftrgt.ebank.repository.TransactionRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
