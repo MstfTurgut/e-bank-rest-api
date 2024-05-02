@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  e-bank-db:
+    container_name: e-bank-db
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=e-bank
+    ports:
+      - '5432:5432'
+    volumes:
+      - e-bank_db:/var/lib/e-bank-postgresql/data
+  e-bank-app:
+    container_name: e-bank-app
+    image: e-bank
+    build: .
+    ports:
+      - '8080:8080'
+    depends_on:
+      - e-bank-db
+volumes:
+  e-bank_db:
+    driver: local
