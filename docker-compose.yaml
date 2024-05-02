@@ -5,6 +5,7 @@ services:
     image: postgres
     restart: always
     environment:
+      - POSTGRES_HOST=e-bank-db
       - POSTGRES_USER=username
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=e-bank
