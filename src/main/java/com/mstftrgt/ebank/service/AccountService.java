@@ -2,6 +2,7 @@ package com.mstftrgt.ebank.service;
 
 
 import com.mstftrgt.ebank.dto.model.AccountDto;
+import com.mstftrgt.ebank.dto.model.CustomerDto;
 import com.mstftrgt.ebank.dto.request.NewAccountRequestDto;
 import com.mstftrgt.ebank.exception.AccountNotFoundException;
 import com.mstftrgt.ebank.model.Account;
@@ -74,8 +75,10 @@ public class AccountService {
     }
 
     public AccountDto getAccountById(String accountId, String customerId) {
-
-        return modelMapper.map(findAccountById(accountId, customerId), AccountDto.class);
+        Account account = findAccountById(accountId, customerId);
+        AccountDto accountDto = modelMapper.map(account, AccountDto.class);
+        accountDto.setCustomerDto(modelMapper.map(account.getCustomer(), CustomerDto.class));
+        return accountDto;
     }
 
     protected Account findAccountById(String accountId, String customerId) {
@@ -100,13 +103,16 @@ public class AccountService {
 
         return accounts
                 .stream()
-                .map(account -> modelMapper.map(account, AccountDto.class))
+                .map(account -> {
+                    AccountDto accountDto = modelMapper.map(account, AccountDto.class);
+                    accountDto.setCustomerDto(modelMapper.map(customer, CustomerDto.class));
+                    return accountDto;
+                })
                 .collect(Collectors.toList());
     }
 
     public void deleteAccountById(String id, String customerId) {
         Account account = findAccountById(id, customerId);
-
         accountRepository.delete(account);
     }
 

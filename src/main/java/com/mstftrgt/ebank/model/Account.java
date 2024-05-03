@@ -24,10 +24,8 @@ public class Account {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @Column(nullable = false, unique = true)
     private String accountNumber;
 
-    @Column(nullable = false)
     private BigDecimal balance;
 
     @CreationTimestamp

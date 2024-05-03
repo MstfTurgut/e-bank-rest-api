@@ -27,10 +27,8 @@ public class Transaction {
     private Account receiverAccount;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private TransactionType transactionType;
 
-    @Column(nullable = false)
     private BigDecimal amount;
 
     @CreationTimestamp

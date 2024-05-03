@@ -22,25 +22,18 @@ public class Customer implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
     private String firstName;
 
-    @Column(nullable = false)
     private String lastName;
 
-    @Column(nullable = false)
     private String phoneNumber;
 
-    @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
     private LocalDateTime dateOfBirth;
 
     public Customer(String email, String password, String firstName, String lastName,
