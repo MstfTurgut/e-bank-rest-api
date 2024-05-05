@@ -2,7 +2,7 @@ package com.mstftrgt.ebank.controller;
 
 import com.mstftrgt.ebank.dto.model.CustomerDto;
 import com.mstftrgt.ebank.dto.request.auth.LoginCustomerRequestDto;
-import com.mstftrgt.ebank.controller.model.LoginResponse;
+import com.mstftrgt.ebank.controller.util.LoginResponse;
 import com.mstftrgt.ebank.dto.request.auth.RegisterCustomerRequestDto;
 import com.mstftrgt.ebank.model.Customer;
 import com.mstftrgt.ebank.service.AuthenticationService;

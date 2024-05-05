@@ -1,6 +1,8 @@
 package com.mstftrgt.ebank.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,8 +15,10 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Data
 @Table(name = "customers")
+@Data
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class Customer implements UserDetails {
 
@@ -32,18 +36,15 @@ public class Customer implements UserDetails {
 
     private String phoneNumber;
 
-    private String address;
-
     private LocalDateTime dateOfBirth;
 
     public Customer(String email, String password, String firstName, String lastName,
-                    String phoneNumber, String address, LocalDateTime dateOfBirth) {
+                    String phoneNumber, LocalDateTime dateOfBirth) {
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
-        this.address = address;
         this.dateOfBirth = dateOfBirth;
     }
 

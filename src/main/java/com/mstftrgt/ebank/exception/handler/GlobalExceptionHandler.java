@@ -1,10 +1,8 @@
 package com.mstftrgt.ebank.exception.handler;
 
-import com.mstftrgt.ebank.exception.AccountNotFoundException;
-import com.mstftrgt.ebank.exception.CustomerNotFoundException;
-import com.mstftrgt.ebank.exception.EmailAlreadyInUseException;
-import com.mstftrgt.ebank.exception.InsufficientBalanceException;
+import com.mstftrgt.ebank.exception.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -59,6 +57,30 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(EmailAlreadyInUseException.class)
     protected Map<String, String> handleEmailAlreadyInUseException(EmailAlreadyInUseException exception) {
+        Map<String, String> map = new HashMap<>();
+        map.put("errorMessage", exception.getMessage());
+        return map;
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(CityNotFoundException.class)
+    protected Map<String, String> handleCityNotFoundException(CityNotFoundException exception) {
+        Map<String, String> map = new HashMap<>();
+        map.put("errorMessage", exception.getMessage());
+        return map;
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(DistrictNotFoundException.class)
+    protected Map<String, String> handleDistrictNotFoundException(DistrictNotFoundException exception) {
+        Map<String, String> map = new HashMap<>();
+        map.put("errorMessage", exception.getMessage());
+        return map;
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(BadCredentialsException.class)
+    protected Map<String, String> handleBadCredentialsException(BadCredentialsException exception) {
         Map<String, String> map = new HashMap<>();
         map.put("errorMessage", exception.getMessage());
         return map;

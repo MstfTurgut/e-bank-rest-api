@@ -29,7 +29,14 @@ public class RegisterCustomerRequestDto {
     private String phoneNumber;
 
     @NotBlank(message = "Address field cannot be empty.")
-    private String address;
+    @Size(max = 250, message = "Address field cannot be longer than 250 characters.")
+    private String plainAddress;
+
+    @NotBlank(message = "City field cannot be empty.")
+    private String city;
+
+    @NotBlank(message = "District field cannot be empty.")
+    private String district;
 
     @Past(message = "Date of birth cannot be in the future.")
     private LocalDateTime dateOfBirth;

@@ -1,12 +1,19 @@
 package com.mstftrgt.ebank.service;
 
 
+import com.mstftrgt.ebank.dto.model.AddressDto;
 import com.mstftrgt.ebank.dto.model.CustomerDto;
 import com.mstftrgt.ebank.dto.request.auth.LoginCustomerRequestDto;
 import com.mstftrgt.ebank.dto.request.auth.RegisterCustomerRequestDto;
-import com.mstftrgt.ebank.exception.EmailAlreadyInUseException;
+import com.mstftrgt.ebank.exception.*;
+import com.mstftrgt.ebank.model.Address;
+import com.mstftrgt.ebank.model.City;
 import com.mstftrgt.ebank.model.Customer;
+import com.mstftrgt.ebank.model.District;
+import com.mstftrgt.ebank.repository.AddressRepository;
+import com.mstftrgt.ebank.repository.CityRepository;
 import com.mstftrgt.ebank.repository.CustomerRepository;
+import com.mstftrgt.ebank.repository.DistrictRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,13 +26,21 @@ import java.util.Optional;
 public class AuthenticationService {
 
     private final CustomerRepository customerRepository;
+
+    private final AddressRepository addressRepository;
+
+    private final CityRepository cityRepository;
+
+    private final DistrictRepository districtRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-
     private final ModelMapper modelMapper;
 
-    public AuthenticationService(CustomerRepository customerRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, ModelMapper modelMapper) {
+    public AuthenticationService(CustomerRepository customerRepository, AddressRepository addressRepository, CityRepository cityRepository, DistrictRepository districtRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, ModelMapper modelMapper) {
         this.customerRepository = customerRepository;
+        this.addressRepository = addressRepository;
+        this.cityRepository = cityRepository;
+        this.districtRepository = districtRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.modelMapper = modelMapper;
@@ -35,20 +50,43 @@ public class AuthenticationService {
 
         Optional<Customer> optionalCustomer = customerRepository.findByEmail(registerCustomerDto.getEmail());
 
-        if(optionalCustomer.isPresent()) throw new EmailAlreadyInUseException("This email already in use.");
+        if (optionalCustomer.isPresent()) throw new EmailAlreadyInUseException("This email already in use.");
 
-        Customer customer = new Customer();
+        Customer customer = Customer.builder()
+                .firstName(registerCustomerDto.getFirstName())
+                .lastName(registerCustomerDto.getLastName())
+                .dateOfBirth(registerCustomerDto.getDateOfBirth())
+                .email(registerCustomerDto.getEmail())
+                .password(passwordEncoder.encode(registerCustomerDto.getPassword()))
+                .phoneNumber(registerCustomerDto.getPhoneNumber())
+                .build();
 
-        customer.setFirstName(registerCustomerDto.getFirstName());
-        customer.setLastName(registerCustomerDto.getLastName());
-        customer.setPhoneNumber(registerCustomerDto.getPhoneNumber());
-        customer.setAddress(registerCustomerDto.getAddress());
-        customer.setDateOfBirth(registerCustomerDto.getDateOfBirth());
+        Customer savedCustomer = customerRepository.save(customer);
 
-        customer.setEmail(registerCustomerDto.getEmail());
-        customer.setPassword(passwordEncoder.encode(registerCustomerDto.getPassword()));
+        Optional<City> city = cityRepository.findByTitle(registerCustomerDto.getCity());
 
-        return modelMapper.map(customerRepository.save(customer), CustomerDto.class);
+        if(city.isEmpty()) throw new CityNotFoundException("City not found.");
+
+        Optional<District> district = districtRepository
+                .findByTitleAndCityId(registerCustomerDto.getDistrict(), city.get().getId());
+
+        if(district.isEmpty())
+            throw new DistrictNotFoundException("District " + registerCustomerDto.getDistrict() +  " not found for the city : " + city.get().getTitle());
+
+        Address address = Address.builder()
+                .plainAddress(registerCustomerDto.getPlainAddress())
+                .city(city.get())
+                .district(district.get())
+                .customer(savedCustomer)
+                .build();
+
+        Address savedAddress = addressRepository.save(address);
+
+        CustomerDto customerDto = modelMapper.map(savedCustomer, CustomerDto.class);
+
+        customerDto.setAddress(modelMapper.map(savedAddress, AddressDto.class));
+
+        return customerDto;
     }
 
     public Customer login(LoginCustomerRequestDto loginCustomerDto) {
