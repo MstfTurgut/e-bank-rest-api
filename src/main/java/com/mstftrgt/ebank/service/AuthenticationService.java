@@ -61,8 +61,6 @@ public class AuthenticationService {
                 .phoneNumber(registerCustomerDto.getPhoneNumber())
                 .build();
 
-        Customer savedCustomer = customerRepository.save(customer);
-
         Optional<City> city = cityRepository.findByTitle(registerCustomerDto.getCity());
 
         if(city.isEmpty()) throw new CityNotFoundException("City not found.");
@@ -73,11 +71,13 @@ public class AuthenticationService {
         if(district.isEmpty())
             throw new DistrictNotFoundException("District " + registerCustomerDto.getDistrict() +  " not found for the city : " + city.get().getTitle());
 
+        Customer savedCustomer = customerRepository.save(customer);
+
         Address address = Address.builder()
                 .plainAddress(registerCustomerDto.getPlainAddress())
                 .city(city.get())
                 .district(district.get())
-                .customer(savedCustomer)
+                .customerId(savedCustomer.getId())
                 .build();
 
         Address savedAddress = addressRepository.save(address);

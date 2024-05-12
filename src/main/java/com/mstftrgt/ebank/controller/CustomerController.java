@@ -22,7 +22,11 @@ public class CustomerController {
     @GetMapping("/me")
     public ResponseEntity<CustomerDto> getCurrentCustomer() {
 
-        return ResponseEntity.ok(customerService.getCurrentCustomer());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        Customer currentCustomer = (Customer) authentication.getPrincipal();
+
+        return ResponseEntity.ok(customerService.getCurrentCustomer(currentCustomer));
     }
 
 }

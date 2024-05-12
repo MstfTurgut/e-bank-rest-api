@@ -28,14 +28,13 @@ public class Address {
     @JoinColumn(name = "district_id")
     private District district;
 
-    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
-    private Customer customer;
+    private String customerId;
 
-    public Address(String plainAddress, City city, District district, Customer customer) {
+    public Address(String plainAddress, City city, District district, String customerId) {
         this.plainAddress = plainAddress;
         this.city = city;
         this.district = district;
-        this.customer = customer;
+        this.customerId = customerId;
     }
 }
