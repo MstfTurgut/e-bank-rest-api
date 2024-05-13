@@ -13,27 +13,25 @@ import com.mstftrgt.ebank.repository.AddressRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDateTime;
 
+@ExtendWith(MockitoExtension.class)
 public class CustomerServiceTests {
-
-    private CustomerService customerService;
+    @Mock
     private AddressRepository addressRepository;
+    @Mock
     private ModelMapper modelMapper;
-
-    @BeforeEach
-    void setUp() {
-        addressRepository = Mockito.mock(AddressRepository.class);
-        modelMapper = Mockito.mock(ModelMapper.class);
-
-        customerService = new CustomerService(addressRepository, modelMapper);
-    }
-
+    @InjectMocks
+    private CustomerService customerService;
 
     @DisplayName("should Return Current CustomerDto When A Customer Logged In")
     @Test
@@ -67,7 +65,6 @@ public class CustomerServiceTests {
         Mockito.verify(addressRepository).findByCustomerId(customer.getId());
         Mockito.verify(modelMapper).map(address, AddressDto.class);
         Mockito.verify(modelMapper).map(customer, CustomerDto.class);
-
     }
 
 }

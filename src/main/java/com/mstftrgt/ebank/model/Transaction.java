@@ -39,10 +39,12 @@ public class Transaction {
     private LocalDateTime date;
 
     private String description;
-    public Transaction(TransactionType transactionType, BigDecimal amount, LocalDateTime date, String description) {
+
+    public Transaction(Account senderAccount, Account receiverAccount, TransactionType transactionType, BigDecimal amount, String description) {
+        this.senderAccount = senderAccount;
+        this.receiverAccount = receiverAccount;
         this.transactionType = transactionType;
         this.amount = amount;
-        this.date = date;
         this.description = description;
     }
 

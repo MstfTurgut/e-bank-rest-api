@@ -9,6 +9,7 @@ import com.mstftrgt.ebank.model.Account;
 import com.mstftrgt.ebank.model.Customer;
 import com.mstftrgt.ebank.model.Transaction;
 import com.mstftrgt.ebank.repository.AccountRepository;
+import com.mstftrgt.ebank.repository.CustomerRepository;
 import com.mstftrgt.ebank.repository.TransactionRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -24,12 +25,15 @@ public class TransactionService {
 
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
+
+    private final CustomerRepository customerRepository;
     private final AccountService accountService;
     private final ModelMapper modelMapper;
 
-    public TransactionService(AccountRepository accountRepository, TransactionRepository transactionRepository, AccountService accountService, ModelMapper modelMapper) {
+    public TransactionService(AccountRepository accountRepository, TransactionRepository transactionRepository, CustomerRepository customerRepository, AccountService accountService, ModelMapper modelMapper) {
         this.accountRepository = accountRepository;
         this.transactionRepository = transactionRepository;
+        this.customerRepository = customerRepository;
         this.accountService = accountService;
         this.modelMapper = modelMapper;
     }
@@ -76,8 +80,10 @@ public class TransactionService {
 
         return transactions.stream().map(transaction -> {
 
-            Customer receiverCustomer = transaction.getReceiverAccount().getCustomer();
-            Customer senderCustomer = transaction.getSenderAccount().getCustomer();
+            Customer receiverCustomer =
+                    customerRepository.findById(transaction.getReceiverAccount().getCustomerId()).orElseThrow();
+            Customer senderCustomer =
+                    customerRepository.findById(transaction.getSenderAccount().getCustomerId()).orElseThrow();
             TransactionDto transactionDto = modelMapper.map(transaction, TransactionDto.class);
             transactionDto.setSenderCustomer(modelMapper.map(senderCustomer, TransactionCustomerDto.class));
             transactionDto.setReceiverCustomer(modelMapper.map(receiverCustomer, TransactionCustomerDto.class));

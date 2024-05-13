@@ -36,7 +36,9 @@ public class AccountController {
     @PostMapping("/create-account")
     public ResponseEntity<Void> createAccount(@RequestBody @Valid NewAccountRequestDto newAccountRequest, UriComponentsBuilder ucb) {
 
-        AccountDto  accountDto = accountService.createNewAccount(newAccountRequest);
+        Customer customer = (Customer) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        AccountDto  accountDto = accountService.createNewAccount(newAccountRequest, customer.getId());
 
         URI locationOfNewAccount = ucb.path("accounts/{id}").buildAndExpand(accountDto.getId()).toUri();
 
@@ -48,7 +50,7 @@ public class AccountController {
 
         Customer customer = (Customer) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return ResponseEntity.ok(accountService.getAllAccounts(customer));
+        return ResponseEntity.ok(accountService.getAllAccounts(customer.getId()));
 
     }
 

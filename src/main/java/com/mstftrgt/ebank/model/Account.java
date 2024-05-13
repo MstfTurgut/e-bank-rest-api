@@ -24,9 +24,8 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "customer_id")
-    private Customer customer;
+    private String customerId;
 
     private String accountNumber;
 
@@ -35,9 +34,9 @@ public class Account {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    public Account(String accountNumber, BigDecimal balance, LocalDateTime createdAt) {
+    public Account(String customerId, String accountNumber, BigDecimal balance) {
+        this.customerId = customerId;
         this.accountNumber = accountNumber;
         this.balance = balance;
-        this.createdAt = createdAt;
     }
 }
