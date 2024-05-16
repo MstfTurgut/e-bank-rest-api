@@ -1,7 +1,7 @@
 package com.mstftrgt.ebank.controller;
 
 import com.mstftrgt.ebank.dto.model.AccountDto;
-import com.mstftrgt.ebank.dto.request.NewAccountRequestDto;
+import com.mstftrgt.ebank.dto.request.NewAccountRequest;
 import com.mstftrgt.ebank.model.Customer;
 import com.mstftrgt.ebank.service.AccountService;
 import jakarta.validation.Valid;
@@ -34,7 +34,7 @@ public class AccountController {
     }
 
     @PostMapping("/create-account")
-    public ResponseEntity<Void> createAccount(@RequestBody @Valid NewAccountRequestDto newAccountRequest, UriComponentsBuilder ucb) {
+    public ResponseEntity<Void> createAccount(@RequestBody @Valid NewAccountRequest newAccountRequest, UriComponentsBuilder ucb) {
 
         Customer customer = (Customer) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 

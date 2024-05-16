@@ -2,7 +2,7 @@ package com.mstftrgt.ebank.service;
 
 import com.mstftrgt.ebank.dto.model.TransactionCustomerDto;
 import com.mstftrgt.ebank.dto.model.TransactionDto;
-import com.mstftrgt.ebank.dto.request.NewMoneyTransferRequestDto;
+import com.mstftrgt.ebank.dto.request.NewMoneyTransferRequest;
 import com.mstftrgt.ebank.exception.AccountNotFoundException;
 import com.mstftrgt.ebank.exception.InsufficientBalanceException;
 import com.mstftrgt.ebank.model.Account;
@@ -38,30 +38,29 @@ public class TransactionService {
         this.modelMapper = modelMapper;
     }
 
-    public void transferMoney(NewMoneyTransferRequestDto transferRequestDto, String accountId, String customerId) {
+    public void transferMoney(NewMoneyTransferRequest transferRequest, String accountId, String customerId) {
 
         Account senderAccount = accountService.findAccountById(accountId, customerId);
 
-        if (senderAccount.getBalance().compareTo(transferRequestDto.getAmount()) < 0)
+        if (senderAccount.getBalance().compareTo(transferRequest.getAmount()) < 0)
             throw new InsufficientBalanceException("Insufficient balance.");
 
-        senderAccount.setBalance(senderAccount.getBalance().subtract(transferRequestDto.getAmount()));
-        accountRepository.save(senderAccount);
-
         Account receiverAccount = accountRepository
-                .findAccountByAccountNumber(transferRequestDto.getReceiverAccountNumber())
+                .findAccountByAccountNumber(transferRequest.getReceiverAccountNumber())
                 .orElseThrow(() -> new AccountNotFoundException("Account not found for the given account number."));
 
-        receiverAccount.setBalance(receiverAccount.getBalance().add(transferRequestDto.getAmount()));
-        accountRepository.save(receiverAccount);
+        senderAccount.setBalance(senderAccount.getBalance().subtract(transferRequest.getAmount()));
+        accountRepository.save(senderAccount);
 
+        receiverAccount.setBalance(receiverAccount.getBalance().add(transferRequest.getAmount()));
+        accountRepository.save(receiverAccount);
 
         Transaction newTransaction = new Transaction();
         newTransaction.setTransactionType(Transaction.TransactionType.TRANSFER);
-        newTransaction.setDescription(transferRequestDto.getDescription());
+        newTransaction.setDescription(transferRequest.getDescription());
         newTransaction.setReceiverAccount(receiverAccount);
         newTransaction.setSenderAccount(senderAccount);
-        newTransaction.setAmount(transferRequestDto.getAmount());
+        newTransaction.setAmount(transferRequest.getAmount());
 
         transactionRepository.save(newTransaction);
     }

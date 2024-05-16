@@ -1,5 +1,6 @@
 package com.mstftrgt.ebank.exception.handler;
 
+import com.mstftrgt.ebank.dto.response.ErrorResponse;
 import com.mstftrgt.ebank.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -32,59 +33,44 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(AccountNotFoundException.class)
-    protected Map<String, String> handleAccountNotFoundException(AccountNotFoundException exception) {
-        Map<String, String> map = new HashMap<>();
-        map.put("errorMessage", exception.getMessage());
-        return map;
+    protected ErrorResponse handleAccountNotFoundException(AccountNotFoundException exception) {
+        return new ErrorResponse(exception.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(CustomerNotFoundException.class)
-    protected Map<String, String> handleCustomerNotFoundException(CustomerNotFoundException exception) {
-        Map<String, String> map = new HashMap<>();
-        map.put("errorMessage", exception.getMessage());
-        return map;
+    protected ErrorResponse handleCustomerNotFoundException(CustomerNotFoundException exception) {
+        return new ErrorResponse(exception.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InsufficientBalanceException.class)
-    protected Map<String, String> handleInsufficientBalanceException(InsufficientBalanceException exception) {
-        Map<String, String> map = new HashMap<>();
-        map.put("errorMessage", exception.getMessage());
-        return map;
+    protected ErrorResponse handleInsufficientBalanceException(InsufficientBalanceException exception) {
+        return new ErrorResponse(exception.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(EmailAlreadyInUseException.class)
-    protected Map<String, String> handleEmailAlreadyInUseException(EmailAlreadyInUseException exception) {
-        Map<String, String> map = new HashMap<>();
-        map.put("errorMessage", exception.getMessage());
-        return map;
+    protected ErrorResponse handleEmailAlreadyInUseException(EmailAlreadyInUseException exception) {
+        return new ErrorResponse(exception.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(CityNotFoundException.class)
-    protected Map<String, String> handleCityNotFoundException(CityNotFoundException exception) {
-        Map<String, String> map = new HashMap<>();
-        map.put("errorMessage", exception.getMessage());
-        return map;
+    protected ErrorResponse handleCityNotFoundException(CityNotFoundException exception) {
+        return new ErrorResponse(exception.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(DistrictNotFoundException.class)
-    protected Map<String, String> handleDistrictNotFoundException(DistrictNotFoundException exception) {
-        Map<String, String> map = new HashMap<>();
-        map.put("errorMessage", exception.getMessage());
-        return map;
+    protected ErrorResponse handleDistrictNotFoundException(DistrictNotFoundException exception) {
+        return new ErrorResponse(exception.getMessage());
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(BadCredentialsException.class)
-    protected Map<String, String> handleBadCredentialsException(BadCredentialsException exception) {
-        Map<String, String> map = new HashMap<>();
-        map.put("errorMessage", exception.getMessage());
-        return map;
+    protected ErrorResponse handleBadCredentialsException(BadCredentialsException exception) {
+        return new ErrorResponse(exception.getMessage());
     }
-
 }
 

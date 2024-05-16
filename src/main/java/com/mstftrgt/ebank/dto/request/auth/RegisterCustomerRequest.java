@@ -3,13 +3,15 @@ package com.mstftrgt.ebank.dto.request.auth;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 @AllArgsConstructor
-public class RegisterCustomerRequestDto {
+public class RegisterCustomerRequest {
 
     @Email(message = "Please enter a valid email address.")
     @NotBlank(message = "Email field cannot be empty.")

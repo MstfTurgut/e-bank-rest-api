@@ -1,9 +1,9 @@
 package com.mstftrgt.ebank.controller;
 
 import com.mstftrgt.ebank.dto.model.CustomerDto;
-import com.mstftrgt.ebank.dto.request.auth.LoginCustomerRequestDto;
-import com.mstftrgt.ebank.controller.util.LoginResponse;
-import com.mstftrgt.ebank.dto.request.auth.RegisterCustomerRequestDto;
+import com.mstftrgt.ebank.dto.request.auth.LoginCustomerRequest;
+import com.mstftrgt.ebank.dto.response.LoginResponse;
+import com.mstftrgt.ebank.dto.request.auth.RegisterCustomerRequest;
 import com.mstftrgt.ebank.model.Customer;
 import com.mstftrgt.ebank.service.AuthenticationService;
 import com.mstftrgt.ebank.service.JwtService;
@@ -28,13 +28,13 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<CustomerDto> register(@RequestBody @Valid RegisterCustomerRequestDto registerCustomerDto) {
+    public ResponseEntity<CustomerDto> register(@RequestBody @Valid RegisterCustomerRequest registerCustomerDto) {
         CustomerDto registeredCustomer = authenticationService.register(registerCustomerDto);
         return ResponseEntity.ok(registeredCustomer);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginCustomerRequestDto loginCustomerDto) {
+    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginCustomerRequest loginCustomerDto) {
         Customer authenticatedCustomer = authenticationService.login(loginCustomerDto);
         String jwtToken = jwtService.generateToken(authenticatedCustomer);
         LoginResponse loginResponse = new LoginResponse(jwtToken, jwtService.getExpirationTime());

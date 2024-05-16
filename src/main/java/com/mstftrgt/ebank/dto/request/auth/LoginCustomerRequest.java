@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 @Data
 @AllArgsConstructor
-public class LoginCustomerRequestDto {
+public class LoginCustomerRequest {
 
     @Email(message = "Please enter a valid email address.")
     @NotBlank(message = "Email field cannot be empty.")

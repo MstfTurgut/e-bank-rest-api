@@ -1,7 +1,7 @@
 package com.mstftrgt.ebank.service;
 
 import com.mstftrgt.ebank.dto.model.AccountDto;
-import com.mstftrgt.ebank.dto.request.NewAccountRequestDto;
+import com.mstftrgt.ebank.dto.request.NewAccountRequest;
 import com.mstftrgt.ebank.model.Account;
 import com.mstftrgt.ebank.model.Transaction;
 import com.mstftrgt.ebank.repository.AccountRepository;
@@ -47,7 +47,7 @@ public class AccountServiceTests {
     public void shouldCreateNewAccountAndSaveInitialTransaction_whenTheRequestIsValidAndInitialBalanceIsBiggerThanZero() {
         String mockCustomerId = "customerId";
         BigDecimal initialBalance = new BigDecimal("100.00");
-        NewAccountRequestDto mockRequest = new NewAccountRequestDto(initialBalance);
+        NewAccountRequest mockRequest = new NewAccountRequest(initialBalance);
 
         Account mockAccount = new Account("accountId" , mockCustomerId, "generatedAccountNumber", initialBalance, LocalDateTime.now());
 
@@ -82,7 +82,7 @@ public class AccountServiceTests {
 
         String mockCustomerId = "customerId";
         BigDecimal initialBalance = BigDecimal.ZERO;
-        NewAccountRequestDto mockRequest = new NewAccountRequestDto(initialBalance);
+        NewAccountRequest mockRequest = new NewAccountRequest(initialBalance);
 
         Account mockAccount = new Account("accountId" , mockCustomerId, "generatedAccountNumber", initialBalance, LocalDateTime.now());
 

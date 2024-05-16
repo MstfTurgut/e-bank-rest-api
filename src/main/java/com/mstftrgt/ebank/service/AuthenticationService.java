@@ -3,8 +3,8 @@ package com.mstftrgt.ebank.service;
 
 import com.mstftrgt.ebank.dto.model.AddressDto;
 import com.mstftrgt.ebank.dto.model.CustomerDto;
-import com.mstftrgt.ebank.dto.request.auth.LoginCustomerRequestDto;
-import com.mstftrgt.ebank.dto.request.auth.RegisterCustomerRequestDto;
+import com.mstftrgt.ebank.dto.request.auth.LoginCustomerRequest;
+import com.mstftrgt.ebank.dto.request.auth.RegisterCustomerRequest;
 import com.mstftrgt.ebank.exception.*;
 import com.mstftrgt.ebank.model.Address;
 import com.mstftrgt.ebank.model.City;
@@ -26,11 +26,8 @@ import java.util.Optional;
 public class AuthenticationService {
 
     private final CustomerRepository customerRepository;
-
     private final AddressRepository addressRepository;
-
     private final CityRepository cityRepository;
-
     private final DistrictRepository districtRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -46,35 +43,35 @@ public class AuthenticationService {
         this.modelMapper = modelMapper;
     }
 
-    public CustomerDto register(RegisterCustomerRequestDto registerCustomerDto) {
+    public CustomerDto register(RegisterCustomerRequest registerRequest) {
 
-        Optional<Customer> optionalCustomer = customerRepository.findByEmail(registerCustomerDto.getEmail());
+        Optional<Customer> optionalCustomer = customerRepository.findByEmail(registerRequest.getEmail());
 
         if (optionalCustomer.isPresent()) throw new EmailAlreadyInUseException("This email already in use.");
 
         Customer customer = Customer.builder()
-                .firstName(registerCustomerDto.getFirstName())
-                .lastName(registerCustomerDto.getLastName())
-                .dateOfBirth(registerCustomerDto.getDateOfBirth())
-                .email(registerCustomerDto.getEmail())
-                .password(passwordEncoder.encode(registerCustomerDto.getPassword()))
-                .phoneNumber(registerCustomerDto.getPhoneNumber())
+                .firstName(registerRequest.getFirstName())
+                .lastName(registerRequest.getLastName())
+                .dateOfBirth(registerRequest.getDateOfBirth())
+                .email(registerRequest.getEmail())
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
+                .phoneNumber(registerRequest.getPhoneNumber())
                 .build();
 
-        Optional<City> city = cityRepository.findByTitle(registerCustomerDto.getCity());
+        Optional<City> city = cityRepository.findByTitle(registerRequest.getCity());
 
         if(city.isEmpty()) throw new CityNotFoundException("City not found.");
 
         Optional<District> district = districtRepository
-                .findByTitleAndCityId(registerCustomerDto.getDistrict(), city.get().getId());
+                .findByTitleAndCityId(registerRequest.getDistrict(), city.get().getId());
 
         if(district.isEmpty())
-            throw new DistrictNotFoundException("District " + registerCustomerDto.getDistrict() +  " not found for the city : " + city.get().getTitle());
+            throw new DistrictNotFoundException("District " + registerRequest.getDistrict() +  " not found for the city : " + city.get().getTitle());
 
         Customer savedCustomer = customerRepository.save(customer);
 
         Address address = Address.builder()
-                .plainAddress(registerCustomerDto.getPlainAddress())
+                .plainAddress(registerRequest.getPlainAddress())
                 .city(city.get())
                 .district(district.get())
                 .customerId(savedCustomer.getId())
@@ -89,9 +86,9 @@ public class AuthenticationService {
         return customerDto;
     }
 
-    public Customer login(LoginCustomerRequestDto loginCustomerDto) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginCustomerDto.getEmail(), loginCustomerDto.getPassword()));
-        return customerRepository.findByEmail(loginCustomerDto.getEmail()).orElseThrow();
+    public Customer login(LoginCustomerRequest loginRequest) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+        return customerRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
     }
 
 }

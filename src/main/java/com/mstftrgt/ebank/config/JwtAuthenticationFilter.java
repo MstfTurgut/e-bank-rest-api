@@ -1,6 +1,12 @@
 package com.mstftrgt.ebank.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mstftrgt.ebank.dto.response.ErrorResponse;
 import com.mstftrgt.ebank.service.JwtService;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -69,8 +75,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             filterChain.doFilter(request, response);
-        } catch (Exception exception) {
-            handlerExceptionResolver.resolveException(request, response, null, exception);
+        } catch (ExpiredJwtException | MalformedJwtException | SignatureException | UnsupportedJwtException | IllegalArgumentException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            ObjectMapper mapper = new ObjectMapper();
+            ErrorResponse errorResponse = new ErrorResponse("Invalid JWT token");
+            response.setContentType("application/json");
+            response.getWriter().write(mapper.writeValueAsString(errorResponse));
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            ObjectMapper mapper = new ObjectMapper();
+            ErrorResponse errorResponse = new ErrorResponse("Authentication failed");
+            response.setContentType("application/json");
+            response.getWriter().write(mapper.writeValueAsString(errorResponse));
+        }
         }
     }
-}

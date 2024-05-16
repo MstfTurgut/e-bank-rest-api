@@ -2,11 +2,13 @@ package com.mstftrgt.ebank.dto.request;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class NewMoneyTransferRequestDto {
+@AllArgsConstructor
+public class NewMoneyTransferRequest {
 
     @Size(min = 12, max = 12, message = "Account number must be 12 digits long.")
     @NotBlank(message = "Please enter a valid account number.")

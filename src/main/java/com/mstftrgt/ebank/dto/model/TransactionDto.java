@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
+@AllArgsConstructor
 public class TransactionDto {
     @Enumerated(EnumType.STRING)
     private Transaction.TransactionType transactionType;

@@ -2,7 +2,7 @@ package com.mstftrgt.ebank.controller;
 
 
 import com.mstftrgt.ebank.dto.model.TransactionDto;
-import com.mstftrgt.ebank.dto.request.NewMoneyTransferRequestDto;
+import com.mstftrgt.ebank.dto.request.NewMoneyTransferRequest;
 import com.mstftrgt.ebank.model.Customer;
 import com.mstftrgt.ebank.service.TransactionService;
 import jakarta.validation.Valid;
@@ -23,7 +23,7 @@ public class TransactionController {
     }
 
     @PostMapping("accounts/{id}/transfer-money")
-    public ResponseEntity<Void> transferMoney(@RequestBody @Valid NewMoneyTransferRequestDto transferRequestDto,
+    public ResponseEntity<Void> transferMoney(@RequestBody @Valid NewMoneyTransferRequest transferRequestDto,
                                               @PathVariable String id) {
         Customer customer = (Customer) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 

@@ -1,4 +1,4 @@
-package com.mstftrgt.ebank.controller.util;
+package com.mstftrgt.ebank.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

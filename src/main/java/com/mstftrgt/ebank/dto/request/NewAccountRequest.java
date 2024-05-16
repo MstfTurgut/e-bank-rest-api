@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
-public class NewAccountRequestDto {
+public class NewAccountRequest {
 
     @DecimalMin(value = "0.0", message = "Initial balance must be at least zero.")
     @DecimalMax(value = "200000000.0", message = "Initial balance cannot exceed two hundred million.")

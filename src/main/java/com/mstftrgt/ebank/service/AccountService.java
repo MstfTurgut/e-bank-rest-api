@@ -2,11 +2,9 @@ package com.mstftrgt.ebank.service;
 
 
 import com.mstftrgt.ebank.dto.model.AccountDto;
-import com.mstftrgt.ebank.dto.model.CustomerDto;
-import com.mstftrgt.ebank.dto.request.NewAccountRequestDto;
+import com.mstftrgt.ebank.dto.request.NewAccountRequest;
 import com.mstftrgt.ebank.exception.AccountNotFoundException;
 import com.mstftrgt.ebank.model.Account;
-import com.mstftrgt.ebank.model.Customer;
 import com.mstftrgt.ebank.model.Transaction;
 import com.mstftrgt.ebank.repository.AccountRepository;
 import com.mstftrgt.ebank.repository.TransactionRepository;
@@ -34,7 +32,7 @@ public class AccountService {
         this.transactionRepository = transactionRepository;
     }
 
-    public AccountDto createNewAccount(NewAccountRequestDto newAccountRequest, String customerId) {
+    public AccountDto createNewAccount(NewAccountRequest newAccountRequest, String customerId) {
 
         Account newAccount = new Account();
 
@@ -71,17 +69,11 @@ public class AccountService {
     }
 
     protected Account findAccountById(String accountId, String customerId) {
-
-        Optional<Account> accountOptional = accountRepository.findById(accountId);
-
-        if (accountOptional.isEmpty())
-            throw new AccountNotFoundException("Account not found for id : " + accountId);
-
-        Account account = accountOptional.get();
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new AccountNotFoundException("Account not found for id : " + accountId));
 
         if (!account.getCustomerId().equals(customerId))
             throw new AccountNotFoundException("Account not found for id : " + accountId);  // least privilege principle
-
 
         return account;
     }
